@@ -31,7 +31,7 @@ public class MedicoController {
         //no metodo acima eu retorno uma lista dos dados dos medicos pelo record
         //mas o retorno devolve uma list de medico e nao de DadosListagemMedico
     //logo vou converter de medico para DadosListagemMedico com o MAP, atraves do stream.map().tolist()
-        return medicoRepository.findAll(pageable).map(DadosListagemMedico::new);
+        return medicoRepository.findAllByAtivoTrue(pageable).map(DadosListagemMedico::new);
         //DadosListagemMedico precisa ter dentro dele um construtor que receba o objeto do
     // tipo medico, logo precisa criar esse construtor dentro do record DadosListagemMedico,
     // que recebe como parametro um objeto do tipo medico
@@ -47,8 +47,8 @@ public class MedicoController {
     @DeleteMapping("/{id}")
     @Transactional
     public void excluir(@PathVariable Long id){
-        medicoRepository.deleteById(id);
-
+        var medico = medicoRepository.getReferenceById(id);
+        medico.excluir();
 
     }
 
