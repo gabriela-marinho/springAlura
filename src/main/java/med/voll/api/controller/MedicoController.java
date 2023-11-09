@@ -1,9 +1,6 @@
 package med.voll.api.controller;
 import jakarta.validation.Valid;
-import med.voll.api.medico.DadosCadastroMedico;
-import med.voll.api.medico.DadosListagemMedico;
-import med.voll.api.medico.Medico;
-import med.voll.api.medico.MedicoRepository;
+import med.voll.api.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +22,9 @@ public class MedicoController {
         medicoRepository.save(new Medico(dados));
 
     }
-@GetMapping
+    //PARAMETROS COM ? SAO PARAMETROS DE QUERY sao usados em metodos get em padrão http.
+    //PARAMETROS DINAMICOS de url ,bast colocar a / e o parametro desejado
+    @GetMapping
 //   @Transactional nao irá precisar dessa anotation pois nao estou salvando,
 //   atualizando ou exluindo informaçoes, só estou puxando as informaçoes ja existentes
     public Page<DadosListagemMedico> listar(@PageableDefault(size=2, sort={"nome"}) Pageable pageable){
@@ -37,5 +36,21 @@ public class MedicoController {
     // tipo medico, logo precisa criar esse construtor dentro do record DadosListagemMedico,
     // que recebe como parametro um objeto do tipo medico
     }
+    @PutMapping
+    @Transactional
+    public void atualizar(@RequestBody @Valid DadosAtualizacaoMedica dados){
+                var medico = medicoRepository.getReferenceById(dados.id());
+                medico.atualizarInfo(dados);
+    }
+    //EXCLUSAO LOGICA usando o deletemapping(/{isso é o parametro dinamico})
+//com o @PathVariable afirmo que é uma variavel do path do parametro da url
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void excluir(@PathVariable Long id){
+        medicoRepository.deleteById(id);
+
+
+    }
+
 }
  
